@@ -1,10 +1,7 @@
 #! /bin/bash
 
-echo "xcodebuild -scheme estates-checker archive -archivePath executable"
+echo "xcodebuild -scheme estates-checker archive -archivePath estates-checker"
 xcodebuild -scheme estates-checker archive -archivePath estates-checker
-
-echo "rm -fdr executable"
-rm -fdr executable/*
 
 echo "cp -r estates-checker.xcarchive/Products/usr/local/* usr/local/"
 cp -r estates-checker.xcarchive/Products/usr/local/* usr/local/
