@@ -22,11 +22,11 @@ struct Sreality {
     // MARK: -
 
     private static func downloadPozemky() throws -> Data {
-        try Data(contentsOf: pozemkyUrl)
+        try URLRequest(url: pozemkyUrl).download()
     }
 
     private static func downloadDomy() throws -> Data {
-        try Data(contentsOf: domyUrl)
+        try URLRequest(url: pozemkyUrl).download()
     }
 
     private static func parse(_ jsonData: Data) throws -> [Response.Embedded.SrealityEstate] {
