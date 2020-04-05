@@ -35,7 +35,7 @@ struct SrealityCommand: Command {
             let estates = try Sreality.downloadEstates()
             let slackedEstates = store.model.estates.map { $0.url }
             let newEstates = estates.filter { !slackedEstates.contains($0.url) }
-            try newEstates.forEach { try SlackMessage(title: $0.title, content: $0.url  + " @channel").send(to: slackUrl) }
+            try newEstates.forEach { try SlackMessage(title: $0.title, content: $0.url  + " @jancislinsky").send(to: slackUrl) }
 
             store.model.estates.append(contentsOf: newEstates)
             store.save()
