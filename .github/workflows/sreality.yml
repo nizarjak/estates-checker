@@ -6,7 +6,7 @@ name: Sreality
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '* 6 * * *'
+    - cron:  '0 5-18 * * *'
 
 jobs:
   build:
@@ -21,5 +21,5 @@ jobs:
       - name: Commit Changes      
         run: git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
       - name: Push
-        run: git push "https://${{ github.actor }}:${{ secrets.JCISLINSKY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+        run: git push "https://${{ github.actor }}:${{ secrets.JCISLINSKY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:master
       
