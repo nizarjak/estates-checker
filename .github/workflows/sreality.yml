@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Run
-        run: usr/local/bin/estates-checker sreality
+        run: usr/local/bin/estates-checker sreality ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }}
       - name: Commit Changes      
         run: git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
       - name: Push
