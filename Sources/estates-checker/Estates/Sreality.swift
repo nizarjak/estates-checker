@@ -8,12 +8,17 @@
 import Foundation
 
 struct Sreality {
-    private static let pozemkyUrl = URL(string: "https://www.sreality.cz/api/cs/v2/estates?category_main_cb=3&category_type_cb=1&locality_region_id=11&per_page=20&region=obec+Stochov&region_entity_id=3729&region_entity_type=municipality")!
-    private static let domyUrl = URL(string: "https://www.sreality.cz/api/cs/v2/estates?category_main_cb=2&category_type_cb=1&per_page=20&region=obec+Stochov&region_entity_id=3729&region_entity_type=municipality")!
+    static let stochovRegionId = "3729"
+    static let kladnoRegionId = "3661"
+
+    private static var regionId: String = stochovRegionId
+    private static let pozemkyUrl = URL(string: "https://www.sreality.cz/api/cs/v2/estates?category_main_cb=3&category_type_cb=1&per_page=100&region_entity_id=\(regionId)&region_entity_type=municipality")!
+    private static let domyUrl = URL(string: "https://www.sreality.cz/api/cs/v2/estates?category_main_cb=2&category_type_cb=1&per_page=100&region_entity_id=\(regionId)&region_entity_type=municipality")!
 
     // MARK: - Start
 
-    static func downloadEstates() throws -> [Estate] {
+    static func downloadEstates(regionId: String = stochovRegionId) throws -> [Estate] {
+        Self.regionId = regionId
         let pozemky = try parse(downloadPozemky()).map { Estate(title: "🗺 " + $0.title, url: $0.url) }
         let domy = try parse(downloadDomy()).map { Estate(title: "🏠 " + $0.title, url: $0.url) }
         return pozemky + domy
@@ -26,7 +31,7 @@ struct Sreality {
     }
 
     private static func downloadDomy() throws -> Data {
-        try URLRequest(url: pozemkyUrl).download()
+        try URLRequest(url: domyUrl).download()
     }
 
     private static func parse(_ jsonData: Data) throws -> [Response.Embedded.SrealityEstate] {

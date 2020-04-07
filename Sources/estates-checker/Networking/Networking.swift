@@ -15,7 +15,6 @@ enum NetworkError: Swift.Error {
     case withDescription(Error, description: String)
 }
 
-
 extension URLRequest {
     @discardableResult func download() throws -> Data {
         var result: Data!

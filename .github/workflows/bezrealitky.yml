@@ -1,0 +1,25 @@
+# Tutorial https://sarunw.com/posts/github-actions-for-ios-projects/
+# Caching https://sarunw.com/tips/caching-dependencies-in-github-actions/
+
+name: Sreality
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '1 5-18 * * *'
+
+jobs:
+  build:
+    name: Run
+    runs-on: macOS-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Run
+        run: usr/local/bin/estates-checker bezrealitky ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }}
+      - name: Commit Changes      
+        run: git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
+      - name: Push
+        run: git push "https://${{ github.actor }}:${{ secrets.JCISLINSKY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:master
+      

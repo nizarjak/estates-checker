@@ -19,7 +19,9 @@ extension SlackMessage {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         let body = Body(text: "\(title != nil ? "*" + title! + "*\n" : "")\(content)")
         request.httpBody = try JSONEncoder().encode(body)
+        print("SlackMessage: send \(body.text)")
         try request.download()
+        print("SlackMessage: sent")
     }
 
     private struct Body: Encodable {
