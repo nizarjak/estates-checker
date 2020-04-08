@@ -36,7 +36,7 @@ struct Sreality {
 
     private static func parse(_ jsonData: Data) throws -> [Response.Embedded.SrealityEstate] {
         let response = try JSONDecoder().decode(Response.self, from: jsonData)
-        return response._embedded.estates
+        return response._embedded.estates.filter { $0.region_tip == 0 }
     }
 
     // MARK: - Model
@@ -50,6 +50,7 @@ struct Sreality {
             struct SrealityEstate: Decodable {
                 let hash_id: Int
                 let name: String
+                let region_tip: Int
                 var title: String { return name }
                 var url: String { return "https://www.sreality.cz/detail/prodej/pozemek/bydleni/stochov-stochov-/\(hash_id)" }
             }
