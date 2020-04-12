@@ -1,7 +1,7 @@
 # Tutorial https://sarunw.com/posts/github-actions-for-ios-projects/
 # Caching https://sarunw.com/tips/caching-dependencies-in-github-actions/
 
-name: Sreality
+name: BezRealitky
 
 on:
   schedule:
