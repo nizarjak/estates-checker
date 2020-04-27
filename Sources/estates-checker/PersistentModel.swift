@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct PersistentModel: Codable {
+struct PersistentModel: Codable, Hashable {
     var estates: [Estate]
 }

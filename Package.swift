@@ -5,14 +5,82 @@ import PackageDescription
 
 let package = Package(
     name: "estates-checker",
+    products: [
+        .executable(
+            name: "EstatesChecker",
+            targets: ["estates-checker"]),
+        .library(
+            name: "ComposableArchitecture",
+            targets: ["ComposableArchitecture"]),
+        .library(
+            name: "CLI",
+            targets: ["CLI"]),
+        .library(
+            name: "EstatesProvider",
+            targets: ["EstatesProvider"]),
+        .library(
+            name: "Sreality",
+            targets: ["Sreality"]),
+        .library(
+            name: "BezRealitky",
+            targets: ["BezRealitky"]),
+        .library(
+            name: "Notifications",
+            targets: ["Notifications"]),
+    ],
     dependencies: [
-        .package(name: "SwiftPM", url: "https://github.com/apple/swift-package-manager.git", .branch("master")),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.5"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "estates-checker",
-            dependencies: ["SwiftPM"])
+            dependencies: [
+                "ComposableArchitecture",
+                "CLI"
+            ],
+            path: "Sources/estates-checker"
+        ),
+        .target(
+            name: "ComposableArchitecture",
+            dependencies: [],
+            path: "Sources/ComposableArchitecture"
+        ),
+        .target(
+            name: "CLI",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "ComposableArchitecture",
+                "Sreality",
+                "BezRealitky"
+            ],
+            path: "Sources/CLI"
+        ),
+        .target(
+            name: "EstatesProvider",
+            dependencies: [
+            ],
+            path: "Sources/EstatesProvider"
+        ),
+        .target(
+            name: "Sreality",
+            dependencies: [
+                "ComposableArchitecture",
+                "EstatesProvider"
+            ],
+            path: "Sources/Sreality"
+        ),
+        .target(
+            name: "BezRealitky",
+            dependencies: [
+                "ComposableArchitecture",
+                "EstatesProvider"
+            ],
+            path: "Sources/BezRealitky"
+        ),
+        .target(
+            name: "Notifications",
+            dependencies: [],
+            path: "Sources/Notifications"
+        )
     ]
 )

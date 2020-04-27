@@ -1,38 +1,37 @@
-//
-//  File.swift
-//  
-//
-//  Created by Jan Cislinsky (admin) on 04. 04. 2020.
-//
-
 import Foundation
+import EstatesProvider
 
-struct Sreality {
-    static let stochovRegionId = "3729"
-    static let kladnoRegionId = "3661"
+public struct Sreality: EstatesProvider {
+    public typealias Region = String
 
-    private static var regionId: String = stochovRegionId
+    fileprivate static let regions: [String: Region] = [
+        "Stochov": "3729",
+        "Kladno": "3661"
+    ]
+
+    private static var regionId: Region!
     private static let pozemkyUrl = URL(string: "https://www.sreality.cz/api/cs/v2/estates?category_main_cb=3&category_type_cb=1&per_page=100&region_entity_id=\(regionId)&region_entity_type=municipality")!
     private static let domyUrl = URL(string: "https://www.sreality.cz/api/cs/v2/estates?category_main_cb=2&category_type_cb=1&per_page=100&region_entity_id=\(regionId)&region_entity_type=municipality")!
 
     // MARK: - Start
 
-    static func downloadEstates(regionId: String = stochovRegionId) throws -> [Estate] {
-        Self.regionId = regionId
-        let pozemky = try parse(downloadPozemky()).map { Estate(title: "🗺 " + $0.title, url: $0.url) }
-        let domy = try parse(downloadDomy()).map { Estate(title: "🏠 " + $0.title, url: $0.url) }
-        return pozemky + domy
+    static func downloadEstates(for region: Region) throws -> [Estate] {
+        Self.regionId = region
+        fatalError()
+//        let pozemky = try parse(downloadPozemky()).map { Estate(title: "🗺 " + $0.title, url: $0.url) }
+//        let domy = try parse(downloadDomy()).map { Estate(title: "🏠 " + $0.title, url: $0.url) }
+//        return pozemky + domy
     }
 
     // MARK: -
 
-    private static func downloadPozemky() throws -> Data {
-        try URLRequest(url: pozemkyUrl).download()
-    }
-
-    private static func downloadDomy() throws -> Data {
-        try URLRequest(url: domyUrl).download()
-    }
+//    private static func downloadPozemky() throws -> Data {
+//        try URLRequest(url: pozemkyUrl).download()
+//    }
+//
+//    private static func downloadDomy() throws -> Data {
+//        try URLRequest(url: domyUrl).download()
+//    }
 
     private static func parse(_ jsonData: Data) throws -> [Response.Embedded.SrealityEstate] {
         let response = try JSONDecoder().decode(Response.self, from: jsonData)
@@ -55,5 +54,19 @@ struct Sreality {
                 var url: String { return "https://www.sreality.cz/detail/prodej/pozemek/bydleni/stochov-stochov-/\(hash_id)" }
             }
         }
+    }
+}
+
+// MARK: - EstatesProvider
+
+extension EstatesProvider where Self == Sreality {
+    public static var providerName: String { "sreality" }
+    
+    public static var availableRegions: [String] {
+        Array(Self.regions.keys)
+    }
+
+    public static func isRegionNameValid(_ region: String) -> Bool {
+        Self.regions.keys.contains(region)
     }
 }
