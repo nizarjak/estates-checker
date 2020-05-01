@@ -1,5 +1,5 @@
 import Foundation
-import EstatesProvider
+import ComposableArchitecture
 
 public struct BezRealitky: EstatesProvider {
     public typealias Region = (latMin: String, latMax: String, lngMin: String, lngMax: String)
@@ -9,39 +9,42 @@ public struct BezRealitky: EstatesProvider {
         "Kladno": ("50", "51", "14", "15")
     ]
 
-    private static var region: Region!
     private static let sourceUrl = URL(string: "https://www.bezrealitky.cz/api/record/markers")!
 
     // MARK: - Start
 
-    static func downloadEstates(region: Region) throws -> [Estate] {
-        Self.region = region
-        fatalError()
-//        return try parse(downloadPozemkyAndDomy()).map { Estate(title: $0.title, url: $0.url) }
+    public static func exploreEffects(region: String) -> [Effect<Result<[Estate], Error>>] {
+        var request = URLRequest(url: sourceUrl)
+        request.httpMethod = "POST"
+        request.httpBody = RequestBody(region: Self.regions[region]!).encode()
+        return [dataTask(with: request)
+            .sync()
+            .validate()
+            .decode(as: [BezRealitkyEstate].self)
+            .map { result in
+                switch result {
+                case .success(let response):
+                    let estates = response.map { Estate(title: $0.title, url: $0.url) }
+                    return .success(estates)
+                case .failure(let error): return .failure(error)
+                }
+            }
+        ]
     }
+}
 
-    // MARK: -
+// MARK: - Model
 
-//    private static func downloadPozemkyAndDomy() throws -> Data {
-//        var request = URLRequest(url: sourceUrl)
-//        request.httpMethod = "POST"
-//        request.httpBody = RequestBody().encode()
-//        return try request.download()
-//    }
-//
-//    private static func parse(_ jsonData: Data) throws -> [BezRealitkyEstate] {
-//        try JSONDecoder().decode([BezRealitkyEstate].self, from: jsonData)
-//    }
+extension BezRealitky {
 
-    // MARK: - Model
-
-//    struct RequestBody: WWWFormUrlEncodable {
-//        var params: [String : String] = [
-//            "offerType": "prodej",
-//            "estateType": "pozemek,dum",
-//            "boundary": "[[{\"lat\":\(region.latMax),\"lng\":\(region.lngMin)},{\"lat\":\(region.latMax),\"lng\":\(region.lngMax)},{\"lat\":\(region.latMin),\"lng\":\(region.lngMax)},{\"lat\":\(region.latMin),\"lng\":\(region.lngMin)},{\"lat\":\(region.latMax),\"lng\":\(region.lngMax)}]]"
-//        ]
-//    }
+    struct RequestBody: WWWFormUrlEncodable {
+        let region: Region
+        var params: [String : String] {[
+            "offerType": "prodej",
+            "estateType": "pozemek,dum",
+            "boundary": "[[{\"lat\":\(region.latMax),\"lng\":\(region.lngMin)},{\"lat\":\(region.latMax),\"lng\":\(region.lngMax)},{\"lat\":\(region.latMin),\"lng\":\(region.lngMax)},{\"lat\":\(region.latMin),\"lng\":\(region.lngMin)},{\"lat\":\(region.latMax),\"lng\":\(region.lngMax)}]]"
+        ]}
+    }
 
     static private let numberFormatter: NumberFormatter = {
         let rVal = NumberFormatter()

@@ -6,10 +6,10 @@ public func logging<Value, Action>(
         let effects = reducer(&value, action)
         let newValue = value
         return [Effect { _ in
+            print("===")
             print("Action: \(action)")
             print("Value:")
             dump(newValue)
-            print("---")
             }] + effects
     }
 }

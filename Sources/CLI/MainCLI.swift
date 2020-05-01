@@ -1,7 +1,6 @@
 import Foundation
 import ArgumentParser
 import ComposableArchitecture
-import Notifications
 
 public struct MainCLI: ParsableCommand {
     public static let configuration = CommandConfiguration(
@@ -58,7 +57,9 @@ public struct MainCLI: ParsableCommand {
 
     public func run() throws {
         Self.store.send(.receivedSlackUrl(URL(string: slackUrl)!))
+        Self.store.send(.loadEstatesFromStorage)
         Self.store.send(.explore(provider: provider, region: region))
+        Self.store.send(.writeEstatesToStorage)
     }
 }
 

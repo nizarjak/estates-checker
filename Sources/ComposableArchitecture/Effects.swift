@@ -46,6 +46,15 @@ extension Effect where A == (Result<Data, Error>) {
             }
         }
     }
+
+    public func ignoreValue() -> Effect<Result<Void, Error>> {
+        self.map { result in
+            switch result {
+            case .success: return Result.success(())
+            case .failure(let error): return Result.failure(error)
+            }
+        }
+    }
 }
 
 public func dataTask(with url: URL) -> Effect<(Data?, URLResponse?, Error?)> {
@@ -55,9 +64,9 @@ public func dataTask(with url: URL) -> Effect<(Data?, URLResponse?, Error?)> {
 public func dataTask(with request: URLRequest) -> Effect<(Data?, URLResponse?, Error?)> {
     return Effect { callback in
         let url = request.url!.absoluteString
-        print("+ start data task \(url)")
+        print(">>>>\n+ start data task \(url)")
         URLSession.shared.dataTask(with: request) { data, response, error in
-            print("– data task ended \(url)")
+            print("– data task ended \(url)\n<<<<")
             callback((data, response, error))
         }
         .resume()

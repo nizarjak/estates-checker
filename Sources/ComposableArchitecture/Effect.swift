@@ -5,6 +5,12 @@ public struct Effect<A> {
         self.run = run
     }
 
+    public init(value: A) {
+        self.run = { callback in
+            callback(value)
+        }
+    }
+
     public func map<B>(_ f: @escaping (A) -> B) -> Effect<B> {
         return Effect<B> { callback in
             self.run { a in

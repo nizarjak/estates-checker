@@ -8,7 +8,7 @@ let package = Package(
     products: [
         .executable(
             name: "EstatesChecker",
-            targets: ["estates-checker"]),
+            targets: ["App"]),
         .library(
             name: "ComposableArchitecture",
             targets: ["ComposableArchitecture"]),
@@ -19,26 +19,26 @@ let package = Package(
             name: "EstatesProvider",
             targets: ["EstatesProvider"]),
         .library(
-            name: "Sreality",
-            targets: ["Sreality"]),
-        .library(
-            name: "BezRealitky",
-            targets: ["BezRealitky"]),
-        .library(
             name: "Notifications",
             targets: ["Notifications"]),
+        .library(
+            name: "Storage",
+            targets: ["Storage"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.5"),
     ],
     targets: [
         .target(
-            name: "estates-checker",
+            name: "App",
             dependencies: [
                 "ComposableArchitecture",
-                "CLI"
+                "CLI",
+                "EstatesProvider",
+                "Notifications",
+                "Storage"
             ],
-            path: "Sources/estates-checker"
+            path: "Sources/App"
         ),
         .target(
             name: "ComposableArchitecture",
@@ -50,8 +50,8 @@ let package = Package(
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 "ComposableArchitecture",
-                "Sreality",
-                "BezRealitky"
+                "Notifications",
+                "Storage",
             ],
             path: "Sources/CLI"
         ),
@@ -62,25 +62,16 @@ let package = Package(
             path: "Sources/EstatesProvider"
         ),
         .target(
-            name: "Sreality",
-            dependencies: [
-                "ComposableArchitecture",
-                "EstatesProvider"
-            ],
-            path: "Sources/Sreality"
-        ),
-        .target(
-            name: "BezRealitky",
-            dependencies: [
-                "ComposableArchitecture",
-                "EstatesProvider"
-            ],
-            path: "Sources/BezRealitky"
-        ),
-        .target(
             name: "Notifications",
-            dependencies: [],
+            dependencies: [
+                "ComposableArchitecture",
+            ],
             path: "Sources/Notifications"
-        )
+        ),
+        .target(
+            name: "Storage",
+            dependencies: ["ComposableArchitecture"],
+            path: "Sources/Storage"
+        ),
     ]
 )
