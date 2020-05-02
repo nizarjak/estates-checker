@@ -57,6 +57,17 @@ extension Effect where A == (Result<Data, Error>) {
     }
 }
 
+extension Effect where A == Result<Void, Error> {
+    public func map<Action>(success: Action, error: @escaping (Error) -> Action) -> Effect<Action> {
+        self.map { result in
+            switch result {
+            case .success: return success
+            case .failure(let err): return error(err)
+            }
+        }
+    }
+}
+
 public func dataTask(with url: URL) -> Effect<(Data?, URLResponse?, Error?)> {
     return dataTask(with: URLRequest(url: url))
 }

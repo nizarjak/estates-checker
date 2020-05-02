@@ -30,7 +30,8 @@ public enum CLIAction {
     case receivedEstates([Estate])
     case exploreFailed(provider: String, region: String, error: Error)
 
-    case failedToSendNotification
+    case notifyAboutNewEstates([Estate])
+    case failedToSendNotification(Error)
     case notificationSent
 }
 
@@ -48,18 +49,14 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
         ]
 
     case .loadedEstatesFromStorage(let estates):
-        state.estates.append(contentsOf: estates)
+        state.estates = estates
         return []
 
     case .failedToLoadEstatesFromStorage(let error):
         return [
             sendNotification((title: "Failed to load estates from storage", content: error.localizedDescription), state.slackUrl!)
-                .map { result in
-                    switch result {
-                    case .success: return CLIAction.notificationSent
-                    case .failure: return CLIAction.failedToSendNotification
-                }
-        }]
+                .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
+        ]
 
     case .writeEstatesToStorage:
         return [
@@ -78,21 +75,16 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
     case .failedToWriteEstatesToStorage(let error):
         return [
             sendNotification((title: "Failed to save estates to storage", content: error.localizedDescription), state.slackUrl!)
-                .map { result in
-                    switch result {
-                    case .success: return CLIAction.notificationSent
-                    case .failure: return CLIAction.failedToSendNotification
-                }
-        }]
+                .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
+        ]
 
     case .receivedSlackUrl(let url):
         state.slackUrl = url
         return []
 
     case let .validate(providerName, regionName):
-        let providers: [EstatesProvider.Type] = [Sreality.self, BezRealitky.self]
-        guard let provider = providers.first(where: { $0.providerName == providerName }) else {
-            state.validationError = .invalidProvider(availableProviders: providers.map { $0.providerName })
+        guard let provider = allEstatesProviders.first(where: { $0.providerName == providerName }) else {
+            state.validationError = .invalidProvider(availableProviders: allEstatesProviders.map { $0.providerName })
             return []
         }
         guard provider.isRegionNameValid(regionName) else {
@@ -102,8 +94,7 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
         return []
 
     case let .explore(provider, region):
-        let providers: [EstatesProvider.Type] = [Sreality.self, BezRealitky.self]
-        return providers
+        return allEstatesProviders
             .first { $0.providerName == provider }!
             .exploreEffects(region: region).map { effect in
                 effect.map { result -> CLIAction in
@@ -115,20 +106,25 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
             }
 
     case .receivedEstates(let estates):
-        state.estates.append(contentsOf: estates)
-        return []
+        let oldEstates = Set(state.estates)
+        let allEstates = Set(state.estates + estates)
+        state.estates = Array(allEstates)
+        let newUniqEstates = allEstates.subtracting(oldEstates)
+        return [Effect(value: .notifyAboutNewEstates(Array(newUniqEstates)))]
 
     case .exploreFailed(provider: let provider, region: let region, error: let error):
         return [
             sendNotification((title: "Failed to explore \(provider) for \(region)", content: error.localizedDescription), state.slackUrl!)
-                .map { result in
-                    switch result {
-                    case .success: return CLIAction.notificationSent
-                    case .failure: return CLIAction.failedToSendNotification
-                    }
-                }
+                .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
 
         ]
+
+    case .notifyAboutNewEstates(let estates):
+        return estates.map {
+            sendNotification((title: "test" + $0.title, content: $0.url), state.slackUrl!)
+                .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
+        }
+
     case .failedToSendNotification:
         return []
 
