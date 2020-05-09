@@ -4,12 +4,37 @@ import EstatesProvider
 import Notifications
 import Storage
 
-public struct CLIState: Hashable {
-    var slackUrl: URL?
-    var validationError: MainCLI.Error?
-    var estates: [Estate] = []
+public enum CLIError: Swift.Error, Hashable {
+    case invalidSlackUrl
+    case invalidProvider(availableProviders: [String])
+    case invalidRegion(availableRegions: [String])
+}
 
-    public init() {}
+public struct CLIState: Hashable {
+    public struct Shared: Hashable {
+        public var slackUrl: URL?
+        public var estates: [Estate]
+
+        public init(slackUrl: URL?, estates: [Estate]) {
+            self.slackUrl = slackUrl
+            self.estates = estates
+        }
+    }
+    public struct Inner: Hashable {
+        var validationError: CLIError?
+
+        public init() {
+            self.validationError = nil
+        }
+    }
+
+    public var shared: Shared
+    public var inner: Inner
+
+    public init(shared: Shared, inner: Inner) {
+        self.shared = shared
+        self.inner = inner
+    }
 
     public static func == (lhs: CLIState, rhs: CLIState) -> Bool {
         lhs.hashValue == rhs.hashValue
@@ -17,13 +42,6 @@ public struct CLIState: Hashable {
 }
 
 public enum CLIAction {
-    case loadEstatesFromStorage
-    case loadedEstatesFromStorage([Estate])
-    case failedToLoadEstatesFromStorage(Error)
-    case writeEstatesToStorage
-    case estatesWrittenToStorage
-    case failedToWriteEstatesToStorage(Error)
-
     case receivedSlackUrl(URL)
     case validate(provider: String, region: String)
     case explore(provider: String, region: String)
@@ -31,64 +49,24 @@ public enum CLIAction {
     case exploreFailed(provider: String, region: String, error: Error)
 
     case notifyAboutNewEstates([Estate])
+    
     case failedToSendNotification(Error)
     case notificationSent
 }
 
 public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIAction>] {
     switch action {
-    case .loadEstatesFromStorage:
-        return [
-            Storage.loadEffect()
-                .map { (result: Result<PersistentModel?, Error>) in
-                    switch result {
-                    case .success(let storageEstates): return CLIAction.loadedEstatesFromStorage(storageEstates?.estates ?? [])
-                    case .failure(let error): return CLIAction.failedToLoadEstatesFromStorage(error)
-                    }
-            }
-        ]
-
-    case .loadedEstatesFromStorage(let estates):
-        state.estates = estates
-        return []
-
-    case .failedToLoadEstatesFromStorage(let error):
-        return [
-            sendNotification((title: "Failed to load estates from storage", content: error.localizedDescription), state.slackUrl!)
-                .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
-        ]
-
-    case .writeEstatesToStorage:
-        return [
-            Storage.saveEffect(value: PersistentModel(estates: state.estates))
-                .map {
-                    switch $0 {
-                    case .success: return CLIAction.estatesWrittenToStorage
-                    case .failure(let error): return CLIAction.failedToWriteEstatesToStorage(error)
-                    }
-            }
-        ]
-
-    case .estatesWrittenToStorage:
-        return []
-
-    case .failedToWriteEstatesToStorage(let error):
-        return [
-            sendNotification((title: "Failed to save estates to storage", content: error.localizedDescription), state.slackUrl!)
-                .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
-        ]
-
     case .receivedSlackUrl(let url):
-        state.slackUrl = url
+        state.shared.slackUrl = url
         return []
 
     case let .validate(providerName, regionName):
         guard let provider = allEstatesProviders.first(where: { $0.providerName == providerName }) else {
-            state.validationError = .invalidProvider(availableProviders: allEstatesProviders.map { $0.providerName })
+            state.inner.validationError = .invalidProvider(availableProviders: allEstatesProviders.map { $0.providerName })
             return []
         }
         guard provider.isRegionNameValid(regionName) else {
-            state.validationError = .invalidRegion(availableRegions: provider.availableRegions)
+            state.inner.validationError = .invalidRegion(availableRegions: provider.availableRegions)
             return []
         }
         return []
@@ -106,22 +84,22 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
             }
 
     case .receivedEstates(let estates):
-        let oldEstates = Set(state.estates)
-        let allEstates = Set(state.estates + estates)
-        state.estates = Array(allEstates)
+        let oldEstates = Set(state.shared.estates)
+        let allEstates = Set(state.shared.estates + estates)
+        state.shared.estates = Array(allEstates)
         let newUniqEstates = allEstates.subtracting(oldEstates)
         return [Effect(value: .notifyAboutNewEstates(Array(newUniqEstates)))]
 
     case .exploreFailed(provider: let provider, region: let region, error: let error):
         return [
-            sendNotification((title: "Failed to explore \(provider) for \(region)", content: error.localizedDescription), state.slackUrl!)
+            sendNotification((title: "Failed to explore \(provider) for \(region)", content: error.localizedDescription), state.shared.slackUrl!)
                 .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
 
         ]
 
     case .notifyAboutNewEstates(let estates):
         return estates.map {
-            sendNotification((title: "test" + $0.title, content: $0.url), state.slackUrl!)
+            sendNotification((title: "test" + $0.title, content: $0.url), state.shared.slackUrl!)
                 .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
         }
 

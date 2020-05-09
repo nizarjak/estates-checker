@@ -24,6 +24,9 @@ let package = Package(
         .library(
             name: "Storage",
             targets: ["Storage"]),
+        .library(
+            name: "Networking",
+            targets: ["Networking"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.5"),
@@ -58,6 +61,7 @@ let package = Package(
         .target(
             name: "EstatesProvider",
             dependencies: [
+                "Networking",
             ],
             path: "Sources/EstatesProvider"
         ),
@@ -65,13 +69,19 @@ let package = Package(
             name: "Notifications",
             dependencies: [
                 "ComposableArchitecture",
+                "Networking",
             ],
-            path: "Sources/Notifications"
+            path: "Sources/Services/Notifications"
         ),
         .target(
             name: "Storage",
             dependencies: ["ComposableArchitecture"],
-            path: "Sources/Storage"
+            path: "Sources/Services/Storage"
+        ),
+        .target(
+            name: "Networking",
+            dependencies: ["ComposableArchitecture"],
+            path: "Sources/Networking"
         ),
     ]
 )

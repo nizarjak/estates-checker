@@ -1,5 +1,6 @@
 import Foundation
 import ComposableArchitecture
+import Networking
 
 public struct BezRealitky: EstatesProvider {
     public typealias Region = (latMin: String, latMax: String, lngMin: String, lngMax: String)
@@ -42,7 +43,7 @@ extension BezRealitky {
         var params: [String : String] {[
             "offerType": "prodej",
             "estateType": "pozemek,dum",
-            "boundary": "[[{\"lat\":\(region.latMax),\"lng\":\(region.lngMin)},{\"lat\":\(region.latMax),\"lng\":\(region.lngMax)},{\"lat\":\(region.latMin),\"lng\":\(region.lngMax)},{\"lat\":\(region.latMin),\"lng\":\(region.lngMin)},{\"lat\":\(region.latMax),\"lng\":\(region.lngMax)}]]"
+            "boundary": "[[[{\"lat\":\(region.latMax),\"lng\":\(region.lngMin)},{\"lat\":\(region.latMax),\"lng\":\(region.lngMax)},{\"lat\":\(region.latMin),\"lng\":\(region.lngMax)},{\"lat\":\(region.latMin),\"lng\":\(region.lngMin)},{\"lat\":\(region.latMax),\"lng\":\(region.lngMax)}]]]"
         ]}
     }
 

@@ -1,5 +1,6 @@
 import Foundation
 import ComposableArchitecture
+import Networking
 
 public struct Sreality: EstatesProvider {
     public typealias Region = String
@@ -73,6 +74,7 @@ extension EstatesProvider where Self == Sreality {
     }
 
     public static func isRegionNameValid(_ region: String) -> Bool {
+        return false
         Self.regions.keys.contains(region)
     }
 }

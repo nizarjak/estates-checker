@@ -37,18 +37,12 @@ public struct MainCLI: ParsableCommand {
 
     // MARK: - Validation
 
-    enum Error: Swift.Error, Hashable {
-        case invalidSlackUrl
-        case invalidProvider(availableProviders: [String])
-        case invalidRegion(availableRegions: [String])
-    }
-
     public func validate() throws {
         guard URL(string: slackUrl) != nil else {
-            throw Error.invalidSlackUrl
+            throw CLIError.invalidSlackUrl
         }
         Self.store.send(.validate(provider: provider, region: region))
-        if let error = Self.store.value.validationError {
+        if let error = Self.store.value.inner.validationError {
             throw error
         }
     }
@@ -57,9 +51,7 @@ public struct MainCLI: ParsableCommand {
 
     public func run() throws {
         Self.store.send(.receivedSlackUrl(URL(string: slackUrl)!))
-        Self.store.send(.loadEstatesFromStorage)
         Self.store.send(.explore(provider: provider, region: region))
-        Self.store.send(.writeEstatesToStorage)
     }
 }
 
