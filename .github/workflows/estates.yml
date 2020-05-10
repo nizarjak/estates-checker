@@ -4,12 +4,9 @@
 name: Sreality
 
 on:
-  push:
-    branches:
-      - redux
-  #schedule:
+  schedule:
     # * is a special character in YAML so you have to quote this string
-    # - cron:  '0 5-18 * * *'
+    - cron:  '0 5-18 * * *'
 
 jobs:
   build:
