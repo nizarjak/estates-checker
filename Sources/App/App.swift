@@ -2,6 +2,7 @@ import Foundation
 import ComposableArchitecture
 import CLI
 import EstatesProvider
+import Persistence
 
 struct AppState: Hashable {
     var estates: [Estate]
