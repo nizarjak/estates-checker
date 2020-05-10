@@ -27,6 +27,9 @@ let package = Package(
         .library(
             name: "Networking",
             targets: ["Networking"]),
+        .library(
+            name: "Persistence",
+            targets: ["Persistence"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.5"),
@@ -39,7 +42,7 @@ let package = Package(
                 "CLI",
                 "EstatesProvider",
                 "Notifications",
-                "Storage"
+                "Persistence"
             ],
             path: "Sources/App"
         ),
@@ -82,6 +85,11 @@ let package = Package(
             name: "Networking",
             dependencies: ["ComposableArchitecture"],
             path: "Sources/Networking"
+        ),
+        .target(
+            name: "Persistence",
+            dependencies: ["ComposableArchitecture", "Storage", "EstatesProvider", "Notifications"],
+            path: "Sources/Persistence"
         ),
     ]
 )

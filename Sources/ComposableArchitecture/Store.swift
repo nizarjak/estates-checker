@@ -4,19 +4,26 @@ public final class Store<Value: Hashable, Action> {
     private let reducer: Reducer<Value, Action>
     public private(set) var value: Value {
         didSet {
-            guard oldValue.hashValue != value.hashValue else { return } // skip repeats
-            valueDidSetObservers.forEach { $0(value) }
+            valueDidSetObservers.forEach { $0(oldValue, value) }
         }
     }
-    @Atomic private var valueDidSetObservers: [(Value) -> Void] = []
+    @Atomic private var valueDidSetObservers: [(_ old: Value, _ new: Value) -> Void] = []
 
     public init(initialValue: Value, reducer: @escaping Reducer<Value, Action>) {
         self.reducer = reducer
         self.value = initialValue
     }
 
-    public func addValueObserver(_ observer: @escaping (Value) -> Void) {
-        $valueDidSetObservers.mutate { $0.append(observer) }
+    public func addValueObserver<LocalValue: Hashable>(
+        _ value: WritableKeyPath<Value, LocalValue>,
+        observer: @escaping (LocalValue) -> Void
+    ) {
+        $valueDidSetObservers.mutate {
+            $0.append { old, new in
+                guard old[keyPath: value].hashValue != new[keyPath: value].hashValue else { return } // skip repeats
+                observer(new[keyPath: value])
+            }
+        }
     }
 
     public func send(_ action: Action) {
@@ -40,8 +47,8 @@ public final class Store<Value: Hashable, Action> {
             }
         )
         $valueDidSetObservers.mutate { observers in
-            observers.append { [weak localStore] newValue in
-                localStore?.value = toLocalValue(newValue)
+            observers.append { [weak localStore] _, new in
+                localStore?.value = toLocalValue(new)
             }
         }
         return localStore

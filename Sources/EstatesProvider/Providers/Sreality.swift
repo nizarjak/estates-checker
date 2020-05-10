@@ -74,7 +74,6 @@ extension EstatesProvider where Self == Sreality {
     }
 
     public static func isRegionNameValid(_ region: String) -> Bool {
-        return false
         Self.regions.keys.contains(region)
     }
 }
