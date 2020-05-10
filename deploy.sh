@@ -1,7 +1,7 @@
 #! /bin/bash
 
 echo "xcodebuild -scheme EstatesChecker archive -archivePath estates-checker"
-xcodebuild -scheme estates-checker archive -archivePath estates-checker
+xcodebuild -scheme EstatesChecker archive -archivePath estates-checker
 
 echo "cp -r estates-checker.xcarchive/Products/usr/local/* usr/local/"
 cp -r estates-checker.xcarchive/Products/usr/local/* usr/local/
