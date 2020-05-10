@@ -20,9 +20,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Run Sreality
-        run: usr/local/bin/estates-checker --slack-url ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }} --provider sreality --region Stochov
+        run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }} --provider sreality --region Stochov
       - name: Run BezRealitky
-        run: usr/local/bin/estates-checker --slack-url ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }} --provider bezrealitky --region Stochov
+        run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }} --provider bezrealitky --region Stochov
       - name: Commit Changes      
         run: git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
       - name: Push
