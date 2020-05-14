@@ -5,6 +5,7 @@ import EstatesProvider
 import Persistence
 
 struct AppState: Hashable {
+    var initialEstatesHash: Int
     var estates: [Estate]
     var slackUrl: URL?
     var persistence: PersistenceState {
@@ -60,7 +61,20 @@ enum AppAction {
     }
 }
 
+func saveReducer(state: inout AppState, action: AppAction) -> [Effect<AppAction>] {
+    if case .persistence(let persistentAction) = action, case .loadedEstatesFromStorage(let estates) = persistentAction {
+        state.initialEstatesHash = estates.hashValue
+    }
+    else if case .cli(let cliAction) = action, case .finishedRun = cliAction, state.initialEstatesHash != state.estates.hashValue {
+        return [Effect { callback in
+            callback(.persistence(.writeEstatesToStorage))
+        }]
+    }
+    return []
+}
+
 let appReducer = combine(
+    saveReducer,
     pullback(persistenceReducer, value: \AppState.persistence, action: \AppAction.persistence),
     pullback(cliReducer, value: \AppState.cli, action: \AppAction.cli)
 )

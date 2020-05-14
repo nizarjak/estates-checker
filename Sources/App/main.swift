@@ -4,15 +4,10 @@ import CLI
 import EstatesProvider
 import Persistence
 
-var store = Store(initialValue: AppState(estates: []), reducer: logging(appReducer))
+var store = Store(initialValue: AppState(initialEstatesHash: -1, estates: []), reducer: logging(appReducer))
 
 // Loads data from storage
 store.send(.persistence(.loadEstatesFromStorage))
-
-// Writes data to storage on change
-store.addValueObserver(\AppState.estates) { estates in
-    store.send(.persistence(.writeEstatesToStorage))
-}
 
 // MARK: - Start CLI
 

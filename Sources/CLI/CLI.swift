@@ -52,6 +52,8 @@ public enum CLIAction {
     
     case failedToSendNotification(Error)
     case notificationSent
+
+    case finishedRun
 }
 
 public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIAction>] {
@@ -108,6 +110,9 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
         return []
 
     case .notificationSent:
+        return []
+
+    case .finishedRun:
         return []
     }
 }

@@ -52,6 +52,8 @@ public struct MainCLI: ParsableCommand {
     public func run() throws {
         Self.store.send(.receivedSlackUrl(URL(string: slackUrl)!))
         Self.store.send(.explore(provider: provider, region: region))
+        Self.store.send(.finishedRun)
+        print("################## End of program ##################")
     }
 }
 
