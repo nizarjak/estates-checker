@@ -85,9 +85,8 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
 
     case .receivedEstates(let estates):
         let oldEstates = Set(state.shared.estates)
-        let allEstates = Set(state.shared.estates + estates)
-        state.shared.estates = Array(allEstates)
-        let newUniqEstates = allEstates.subtracting(oldEstates)
+        let newUniqEstates = Set(estates).subtracting(oldEstates)
+        state.shared.estates += newUniqEstates
         return !newUniqEstates.isEmpty
             ? [Effect(value: .notifyAboutNewEstates(Array(newUniqEstates)))]
             : []
