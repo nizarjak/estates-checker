@@ -61,6 +61,7 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
         return []
 
     case let .validate(providerName, regionName):
+        // TODO: Move to environment: allEstatesProviders
         guard let provider = allEstatesProviders.first(where: { $0.providerName == providerName }) else {
             state.inner.validationError = .invalidProvider(availableProviders: allEstatesProviders.map { $0.providerName })
             return []
@@ -72,6 +73,7 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
         return []
 
     case let .explore(provider, region):
+        // TODO: Move to environment: allEstatesProviders
         return allEstatesProviders
             .first { $0.providerName == provider }!
             .exploreEffects(region: region).map { effect in
@@ -93,6 +95,7 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
 
     case .exploreFailed(provider: let provider, region: let region, error: let error):
         return [
+            // TODO: Move to environment: sendNotification
             sendNotification((title: "Failed to explore \(provider) for \(region)", content: error.localizedDescription), state.shared.slackUrl!)
                 .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
 
@@ -100,6 +103,7 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
 
     case .notifyAboutNewEstates(let estates):
         return estates.map {
+            // TODO: Move to environment: sendNotification
             sendNotification((title: "test" + $0.title, content: $0.url), state.shared.slackUrl!)
                 .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
         }

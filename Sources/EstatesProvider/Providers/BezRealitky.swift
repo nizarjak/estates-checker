@@ -18,6 +18,7 @@ public struct BezRealitky: EstatesProvider {
         var request = URLRequest(url: sourceUrl)
         request.httpMethod = "POST"
         request.httpBody = RequestBody(region: Self.regions[region]!).encode()
+        // TODO: Move to environment: dataTask
         return [dataTask(with: request)
             .sync()
             .validate()
@@ -47,6 +48,7 @@ extension BezRealitky {
         ]}
     }
 
+    // TODO: Move to environment: numberFormatter
     static private let numberFormatter: NumberFormatter = {
         let rVal = NumberFormatter()
         rVal.groupingSeparator = " "

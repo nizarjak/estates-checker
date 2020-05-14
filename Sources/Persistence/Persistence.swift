@@ -4,7 +4,6 @@ import Storage
 import EstatesProvider
 import Notifications
 
-// TODO: Save
 public struct PersistenceState: Hashable {
     public var slackUrl: URL?
     public var estates: [Estate]
@@ -31,6 +30,7 @@ public func persistenceReducer(state: inout PersistenceState, action: Persistenc
     switch action {
         case .loadEstatesFromStorage:
             return [
+                // TODO: Move to environment: loadEffect
                 Storage.loadEffect()
                     .map { (result: Result<PersistentModel?, Error>) in
                         switch result {
@@ -46,12 +46,14 @@ public func persistenceReducer(state: inout PersistenceState, action: Persistenc
 
         case .failedToLoadEstatesFromStorage(let error):
             return [
+                // TODO: Move to environment: sendNotification
                 sendNotification((title: "Failed to load estates from storage", content: error.localizedDescription), state.slackUrl!)
                     .map(success: PersistenceAction.notificationSent, error: PersistenceAction.failedToSendNotification)
             ]
 
         case .writeEstatesToStorage:
             return [
+                // TODO: Move to environment: saveEffect
                 Storage.saveEffect(value: PersistentModel(estates: state.estates))
                     .map {
                         switch $0 {
@@ -66,6 +68,7 @@ public func persistenceReducer(state: inout PersistenceState, action: Persistenc
 
         case .failedToWriteEstatesToStorage(let error):
             return [
+                // TODO: Move to environment: sendNotification
                 sendNotification((title: "Failed to save estates to storage", content: error.localizedDescription), state.slackUrl!)
                     .map(success: PersistenceAction.notificationSent, error: PersistenceAction.failedToSendNotification)
             ]

@@ -19,7 +19,7 @@ public struct Sreality: EstatesProvider {
 
     public static func exploreEffects(region: Region) -> [Effect<Result<[Estate], Error>>] {
         let makeEffect: (URL, String) -> Effect<Result<[Estate], Error>> = { url, emoji in
-            dataTask(with: url)
+            dataTask(with: url) // TODO: Move to environment: dataTask
                 .sync()
                 .validate()
                 .decode(as: Sreality.Response.self)
