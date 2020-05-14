@@ -16,7 +16,7 @@ store.addValueObserver(\AppState.estates) { estates in
 
 // MARK: - Start CLI
 
-MainCLI.store = store.view(
+MainCLI.store = store.scope(
     value: { $0.cli },
     action: { .cli($0) }
 )

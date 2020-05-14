@@ -34,4 +34,10 @@ extension Effect {
             callback(result)
         }
     }
+
+    public static func fireAndForget(work: @escaping () -> Void) -> Effect {
+        return Effect { _ in
+            work()
+        }
+    }
 }
