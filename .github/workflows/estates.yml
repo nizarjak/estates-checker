@@ -21,7 +21,7 @@ jobs:
       - name: Run BezRealitky
         run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }} --provider bezrealitky --region Stochov
       - name: Commit Changes      
-        run: git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
+        run: git config user.email "jcislinsky@gmail.com"; git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
       - name: Push
         run: git push "https://${{ github.actor }}:${{ secrets.JCISLINSKY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:master
       
