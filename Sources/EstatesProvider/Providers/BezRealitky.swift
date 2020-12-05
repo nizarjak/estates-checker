@@ -20,7 +20,7 @@ public struct BezRealitky: EstatesProvider {
         let estateTypes: [EstateType]
         let offerType: OfferType = .sell
         let priceTo: String = "8 000 000"
-        let surfaceFrom: String = "50"
+        let surfaceFrom: String = "60"
     }
 
     private static let smichov: PropertyLocation = .init(
