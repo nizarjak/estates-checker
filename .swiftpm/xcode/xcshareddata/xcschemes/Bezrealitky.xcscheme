@@ -60,7 +60,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--region Vrsovice"
+            argument = "--region praha"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

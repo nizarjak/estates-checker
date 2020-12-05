@@ -16,12 +16,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      # - name: Run Sreality Smichov
-      #   run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider sreality --region Smichov
-      # - name: Run Sreality Vrsovice
-      #   run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider sreality --region Vrsovice
-      - name: Run BezRealitky Smichov
-        run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider bezrealitky --region Smichov
+      - name: Run Sreality Praha
+        run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider sreality --region praha
+      - name: Run BezRealitky Praha
+        run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider bezrealitky --region praha
       - name: Commit Changes      
         run: git config user.email "nizajakub@gmail.com"; git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
       - name: Push
