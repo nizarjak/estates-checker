@@ -17,5 +17,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Run
-        run: usr/local/bin/estates-checker test ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }}
+        run: usr/local/bin/estates-checker test ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }}
       

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1140"
+   LastUpgradeVersion = "1220"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "estates-checker"
-               BuildableName = "estates-checker"
-               BlueprintName = "estates-checker"
+               BlueprintIdentifier = "EstatesChecker"
+               BuildableName = "EstatesChecker"
+               BlueprintName = "EstatesChecker"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -34,7 +34,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      launchStyle = "1"
+      launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
@@ -44,19 +44,23 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "estates-checker"
-            BuildableName = "estates-checker"
-            BlueprintName = "estates-checker"
+            BlueprintIdentifier = "EstatesChecker"
+            BuildableName = "EstatesChecker"
+            BlueprintName = "EstatesChecker"
             ReferencedContainer = "container:">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "sreality"
+            argument = "--provider bezrealitky"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "https://www.google.com"
+            argument = "--slack-url https://www.google.com"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--region Vrsovice"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
@@ -71,9 +75,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "estates-checker"
-            BuildableName = "estates-checker"
-            BlueprintName = "estates-checker"
+            BlueprintIdentifier = "EstatesChecker"
+            BuildableName = "EstatesChecker"
+            BlueprintName = "EstatesChecker"
             ReferencedContainer = "container:">
          </BuildableReference>
       </BuildableProductRunnable>

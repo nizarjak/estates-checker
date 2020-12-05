@@ -102,7 +102,7 @@ public func cliReducer(state: inout CLIState, action: CLIAction) -> [Effect<CLIA
 
     case .notifyAboutNewEstates(let estates):
         return estates.map {
-            sendNotification((title: "test" + $0.title, content: $0.url), state.shared.slackUrl!)
+            sendNotification((title: $0.title, content: $0.url), state.shared.slackUrl!)
                 .map(success: CLIAction.notificationSent, error: CLIAction.failedToSendNotification)
         }
 

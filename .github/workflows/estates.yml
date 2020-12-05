@@ -6,7 +6,7 @@ name: Checking Estates
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '0 5-18 * * *'
+    - cron:  '0 7-22 * * *'
 
 jobs:
   build:
@@ -16,12 +16,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - name: Run Sreality
-        run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }} --provider sreality --region Stochov
-      - name: Run BezRealitky
-        run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_ESTATES_STOCHOV }} --provider bezrealitky --region Stochov
+      - name: Run Sreality Smichov
+        run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider sreality --region Smichov
+      # - name: Run Sreality Vrsovice
+      #   run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider sreality --region Vrsovice
+      # - name: Run BezRealitky
+      #   run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider bezrealitky --region Stochov
       - name: Commit Changes      
-        run: git config user.email "jcislinsky@gmail.com"; git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
+        run: git config user.email "nizajakub@gmail.com"; git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
       - name: Push
-        run: git push "https://${{ github.actor }}:${{ secrets.JCISLINSKY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:master
+        run: git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:master
       
