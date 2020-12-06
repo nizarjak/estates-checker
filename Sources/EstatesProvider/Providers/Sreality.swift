@@ -70,18 +70,20 @@ extension Sreality {
 
                 var locality: String { seo.locality }
                 var title: String {
-                    "🏢 byt \(disposition ?? "") \(surface), \(formattedPrice)"
+                    "🏢 byt \(disposition) \(surface), \(formattedPrice)"
                 }
-                var disposition: String? {
-                    name.matches(for: #"([1-9]\+(?:kk|1))"#).first
+                var disposition: String {
+                    name.matches(for: #"([1-9]\+(?:kk|1))"#).first ?? "atypický"
+                }
+                var dispositionUrl: String {
+                    disposition.folding(options: .diacriticInsensitive, locale: .init(identifier: "cs"))
                 }
                 var surface: String {
                     name.matches(for: #"[1-9][0-9]+ m²"#).first ?? ""
                 }
 
                 var url: String? {
-                    guard let disposition = disposition else { return nil }
-                    return "https://www.sreality.cz/detail/prodej/byt/\(disposition)/\(locality)/\(hash_id)" } 
+                    return "https://www.sreality.cz/detail/prodej/byt/\(dispositionUrl)/\(locality)/\(hash_id)" }
 
                 struct Seo: Decodable {
                     let locality: String
