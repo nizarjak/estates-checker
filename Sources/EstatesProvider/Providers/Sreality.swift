@@ -19,7 +19,7 @@ public struct Sreality: EstatesProvider {
     ]
 
     static func flatUrl(with regionId: String) -> URL {
-        return URL(string: "https://www.sreality.cz/api/cs/v2/estates?building_type_search=2%7C3&category_main_cb=1&category_type_cb=1&czk_price_summary_order2=0%7C8000000&locality_region_id=10&per_page=100&region_entity_id=\(regionId)&region_entity_type=ward&usable_area=60%7C10000000000")!
+        return URL(string: "https://www.sreality.cz/api/cs/v2/estates?building_type_search=2%7C3&category_main_cb=1&category_type_cb=1&czk_price_summary_order2=0%7C9000000&locality_region_id=10&per_page=100&region_entity_id=\(regionId)&region_entity_type=ward&usable_area=65%7C10000000000")!
     }
 
     public static func exploreEffects(region: String) -> [Effect<Result<[Estate], Error>>] {
