@@ -22,6 +22,8 @@ jobs:
         run: usr/local/bin/EstatesChecker --slack-url ${{ secrets.SLACK_WEBHOOK_FLAT_CHECKER }} --provider bezrealitky --region praha
       - name: Commit Changes      
         run: git config user.email "nizajakub@gmail.com"; git add .; if [ $((`git diff --cached --numstat | wc -l`)) -gt 0 ]; then git commit -m "Run"; fi
-      - name: Push
-        run: git push "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:master
-      
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
