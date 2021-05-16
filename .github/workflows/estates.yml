@@ -4,11 +4,11 @@
 name: Checking Estates
 
 on:
-  push:
-    branches:
-      - master
-  # schedule:
-    # - cron:  '0 7-22 * * *'
+  # push:
+    # branches:
+    #   - master
+  schedule:
+    - cron:  '0 7-22 * * *'
 
 jobs:
   build:
